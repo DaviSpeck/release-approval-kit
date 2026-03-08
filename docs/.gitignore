@@ -1,0 +1,8 @@
+# Mantém a pasta limpa para artefatos locais adicionais
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.tmp
+.DS_Store
