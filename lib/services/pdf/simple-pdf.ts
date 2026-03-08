@@ -141,10 +141,12 @@ function buildDocumentHtml(input: BuildPdfInput) {
           }
 
           .content {
-            border: 1px solid #dce5f7;
-            border-radius: 12px;
-            padding: 18px 18px 8px;
-            background: #f9fbff;
+            padding: 14px 16px 8px;
+            background: linear-gradient(180deg, #f8fbff 0%, #f3f8ff 100%);
+            border: 1px solid #e5edf9;
+            border-radius: 10px;
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
             position: relative;
             z-index: 1;
           }
@@ -155,6 +157,8 @@ function buildDocumentHtml(input: BuildPdfInput) {
             color: #0e2248;
             margin: 1em 0 0.45em;
             line-height: 1.2;
+            page-break-after: avoid;
+            break-after: avoid-page;
           }
 
           .content h1 { font-size: 22px; }
@@ -162,6 +166,15 @@ function buildDocumentHtml(input: BuildPdfInput) {
           .content h3 { font-size: 15px; }
           .content p,
           .content li { font-size: 12.5px; }
+
+          .content p,
+          .content li,
+          .content blockquote,
+          .content pre,
+          .content table {
+            page-break-inside: avoid;
+            break-inside: avoid-page;
+          }
 
           .content pre,
           .content code {
@@ -190,6 +203,14 @@ function buildDocumentHtml(input: BuildPdfInput) {
           .content ol {
             margin: 0.4em 0 0.8em;
             padding-left: 20px;
+          }
+
+          .content > *:first-child {
+            margin-top: 0;
+          }
+
+          .content > *:last-child {
+            margin-bottom: 0;
           }
 
           .page-break {
@@ -273,10 +294,10 @@ function buildDocumentHtml(input: BuildPdfInput) {
       </head>
       <body>
         <div class="pdf-watermark">
-          <span>RELEASE APPROVAL KIT</span>
+            <span>NEXO</span>
         </div>
         <header class="doc-header">
-          <h1>Release Approval Kit</h1>
+          <h1>Nexo</h1>
           <div class="doc-meta">
             <span>Fonte: ${escapeHtml(input.sourceName)}</span>
             <span>Gerado em: ${escapeHtml(generatedAt)}</span>

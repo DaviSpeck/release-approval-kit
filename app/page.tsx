@@ -118,9 +118,13 @@ export default function HomePage() {
       <section className="shell hero">
         <header className="topbar reveal">
           <div className="brand">
-            <img alt="Release Approval Kit" className="brand-lockup" src="/brand/rak_lockup_horizontal_2x.png" />
+            <img alt="Nexo" className="brand-icon" src="/brand/rak_icon.svg" />
+            <div className="brand-copy">
+              <strong>Nexo</strong>
+              <span>Markdown para PDF</span>
+            </div>
           </div>
-          <p className="eyebrow">FREE SESSION</p>
+          <p className="eyebrow">NEXO FREE</p>
         </header>
 
         <div className="hero-content reveal delay-1">

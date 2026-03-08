@@ -1,6 +1,12 @@
-# Release Approval Kit
+# Nexo
 
-Escopo atual: **sessão FREE não autenticada** para converter **Markdown em PDF** com **anexos de fotos no final**.
+Marca do produto: **Nexo**.
+
+Arquitetura de oferta:
+- **Nexo Free**: sessão não autenticada para converter **Markdown em PDF** com anexos.
+- **Nexo Pro**: fluxo pago para **aprovação de release** com integrações e governança.
+
+Escopo implementado neste repositório hoje: **Nexo Free**.
 
 ## Status atual
 - Next.js fullstack configurado
@@ -15,6 +21,11 @@ Escopo atual: **sessão FREE não autenticada** para converter **Markdown em PDF
 3. Front envia para `POST /api/free/convert`
 4. API gera PDF e retorna para download
 5. PDF sai com conteúdo principal + aba de anexos no final
+
+## Decisão de naming
+- Nome principal do sistema: **Nexo**
+- Linguagem de onboarding no free: **Markdown para PDF**
+- Linguagem de evolução no pago: **Aprovação de release**
 
 ## Endpoints
 - `GET /api/health`

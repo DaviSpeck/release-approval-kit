@@ -93,11 +93,30 @@ body {
   letter-spacing: 0.2px;
 }
 
-.brand-lockup {
-  height: 56px;
-  width: auto;
+.brand-icon {
+  width: 42px;
+  height: 42px;
   display: block;
-  object-fit: contain;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-copy strong {
+  font-size: 1rem;
+  line-height: 1;
+  color: #f3f8ff;
+}
+
+.brand-copy span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #a8c4f0;
 }
 
 .eyebrow {
@@ -343,8 +362,9 @@ pre {
 }
 
 @media (max-width: 960px) {
-  .brand-lockup {
-    height: 42px;
+  .brand-icon {
+    width: 34px;
+    height: 34px;
   }
 
   .metrics {

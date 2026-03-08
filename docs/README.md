@@ -1,4 +1,4 @@
-# Release Approval Kit - Documentação Privada
+# Nexo - Documentação Privada
 
 Esta pasta foi separada em **negócio** e **tecnologia**.
 
@@ -14,8 +14,13 @@ Esta pasta foi separada em **negócio** e **tecnologia**.
 5. `tecnologia/08-backlog-priorizado.md`
 
 ## Contexto de modelo de negócio
-- Free: sessão não autenticada para `.md` + imagens + PDF
-- Paid: GitHub, histórico/versionamento e governança
+- Nexo Free: sessão não autenticada para `.md` + imagens + PDF
+- Nexo Pro: GitHub, histórico/versionamento e governança
+
+## Decisão de marca e produto
+- Marca principal: **Nexo**
+- Nome funcional no modo gratuito: **Markdown para PDF**
+- Nome funcional no modo pago: **Aprovação de Release**
 
 ## Observações
 - Conteúdo em PT-BR
