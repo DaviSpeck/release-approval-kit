@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import LocaleToggle from "@/components/locale-toggle";
 import { useLocale } from "@/components/locale";
 import { useScrollDeck } from "@/components/use-scroll-deck";
+import { trackEvent } from "@/components/public-events";
 
 type AttachmentPayload = {
   fileName: string;
@@ -238,6 +239,15 @@ export default function HomePage() {
 
   const markdownLength = markdown.length;
   const markdownNearLimit = markdownLength > Math.floor(FREE_LIMITS.markdown.maxChars * 0.9);
+
+  useEffect(() => {
+    void trackEvent({
+      eventName: "page_view",
+      eventSource: "web_ui",
+      path: "/",
+      payload: { page: "home" }
+    });
+  }, []);
 
   useEffect(() => {
     if (!status) {
@@ -569,6 +579,15 @@ export default function HomePage() {
     }
   }
 
+  function trackGoToPricing(area: string) {
+    void trackEvent({
+      eventName: "go_to_pricing",
+      eventSource: "web_ui",
+      path: "/",
+      payload: { page: "home", area }
+    });
+  }
+
   return (
     <main className="sales-page motion-root">
       <div className="page-nav-shell motion rise-1">
@@ -585,10 +604,10 @@ export default function HomePage() {
           <div className="hero-nav-actions">
             <LocaleToggle />
             <ThemeToggle />
-            <Link className="btn-nav-ghost" href="/pricing">
+            <Link className="btn-nav-ghost" href="/pricing" onClick={() => trackGoToPricing("nav_access")}>
               {c.ctaAccess}
             </Link>
-            <Link className="btn-nav-solid" href="/pricing">
+            <Link className="btn-nav-solid" href="/pricing" onClick={() => trackGoToPricing("nav_create")}>
               {c.ctaCreate}
             </Link>
           </div>
@@ -605,7 +624,7 @@ export default function HomePage() {
               <a className="btn-cta-main" href="#free-converter">
                 {c.ctaTry}
               </a>
-              <Link className="btn-cta-alt" href="/pricing">
+              <Link className="btn-cta-alt" href="/pricing" onClick={() => trackGoToPricing("hero_access")}>
                 {c.ctaAccess}
               </Link>
             </div>
@@ -917,7 +936,7 @@ export default function HomePage() {
 
         <div className="bottom-cta deck-card">
           <p>{c.bottomCta}</p>
-          <Link className="btn-cta-main" href="/pricing">
+          <Link className="btn-cta-main" href="/pricing" onClick={() => trackGoToPricing("bottom_cta")}>
             {c.ctaAccess}
           </Link>
         </div>

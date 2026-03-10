@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import ThemeToggle from "@/components/theme-toggle";
 import LocaleToggle from "@/components/locale-toggle";
 import { useLocale } from "@/components/locale";
 import { useScrollDeck } from "@/components/use-scroll-deck";
+import { trackEvent } from "@/components/public-events";
 
 type WaitlistFormState = {
   name: string;
@@ -111,6 +112,15 @@ export default function PricingPage() {
   const [form, setForm] = useState<WaitlistFormState>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<string>("");
+
+  useEffect(() => {
+    void trackEvent({
+      eventName: "page_view",
+      eventSource: "web_ui",
+      path: "/pricing",
+      payload: { page: "pricing" }
+    });
+  }, []);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
