@@ -1,12 +1,12 @@
-# Nexo
+# NEXO
 
-Marca do produto: **Nexo**.
+Marca do produto: **NEXO**.
 
 Arquitetura de oferta:
-- **Nexo Free**: sessão não autenticada para converter **Markdown em PDF** com anexos.
-- **Nexo Pro**: fluxo pago para **aprovação de release** com integrações e governança.
+- **NEXO Free**: sessão não autenticada para converter **Markdown em PDF** com anexos.
+- **NEXO Pro**: fluxo pago para **aprovação de release** com integrações e governança.
 
-Escopo implementado neste repositório hoje: **Nexo Free**.
+Escopo implementado neste repositório hoje: **NEXO Free**.
 
 ## Status atual
 - Next.js fullstack configurado
@@ -23,9 +23,14 @@ Escopo implementado neste repositório hoje: **Nexo Free**.
 5. PDF sai com conteúdo principal + aba de anexos no final
 
 ## Decisão de naming
-- Nome principal do sistema: **Nexo**
+- Nome principal do sistema: **NEXO**
 - Linguagem de onboarding no free: **Markdown para PDF**
 - Linguagem de evolução no pago: **Aprovação de release**
+
+## Identidade visual
+- Logo principal usada pelo sistema: `public/brand/nexo_logo_primary.svg`
+- Versão mono usada em contextos discretos (ex.: PDF): `public/brand/nexo_logo_primary_mono.svg`
+- Favicon e ícones do app: derivados de `public/brand/nexo_logo_primary.(svg|png)`
 
 ## Endpoints
 - `GET /api/health`
@@ -50,8 +55,11 @@ Escopo implementado neste repositório hoje: **Nexo Free**.
    ```
 
 ## Limites atuais
-- Máximo de 12 imagens por conversão
-- Total de anexos limitado a ~20MB no payload
+- Markdown: até 120.000 caracteres
+- Máximo de 8 anexos por conversão
+- Máximo de 4MB por anexo
+- Total de anexos limitado a 16MB
+- Tipos de anexo permitidos: `image/png`, `image/jpeg`, `image/webp`
 
 ## Se der erro de Chromium
 - Primeiro rode: `yarn playwright install chromium`

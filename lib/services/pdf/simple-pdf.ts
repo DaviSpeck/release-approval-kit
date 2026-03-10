@@ -1,4 +1,6 @@
 import MarkdownIt from "markdown-it";
+import { existsSync, readFileSync } from "node:fs";
+import { extname, join } from "node:path";
 import { chromium } from "playwright";
 
 type AttachmentInput = {
@@ -12,6 +14,9 @@ type BuildPdfInput = {
   sourceName: string;
   attachments: AttachmentInput[];
 };
+
+const HEADER_LOGO_CANDIDATES = ["nexo_logo_primary.svg", "nexo_logo_primary.png"];
+const WATERMARK_LOGO_CANDIDATES = ["nexo_logo_primary_mono.svg", "nexo_logo_primary.svg", "nexo_logo_primary_mono.png"];
 
 function escapeHtml(value: string) {
   return value
@@ -30,10 +35,30 @@ function chunkAttachments(attachments: AttachmentInput[], size: number) {
   return chunks;
 }
 
-function buildDocumentHtml(input: BuildPdfInput) {
+function resolveBrandAssetDataUrl(candidates: string[]) {
+  for (const fileName of candidates) {
+    const absolutePath = join(process.cwd(), "public", "brand", fileName);
+    if (!existsSync(absolutePath)) {
+      continue;
+    }
+
+    const extension = extname(fileName).toLowerCase();
+    const mimeType = extension === ".svg" ? "image/svg+xml" : "image/png";
+    const encoded = readFileSync(absolutePath).toString("base64");
+    return `data:${mimeType};base64,${encoded}`;
+  }
+
+  return "";
+}
+
+function buildDocumentHtml(
+  input: BuildPdfInput,
+  generatedAt: string,
+  headerLogoDataUrl: string,
+  watermarkLogoDataUrl: string
+) {
   const md = new MarkdownIt({ html: false, linkify: true, typographer: true, breaks: true });
   const contentHtml = md.render(input.markdown);
-  const generatedAt = new Date().toLocaleString("pt-BR", { hour12: false });
 
   const attachmentPages = chunkAttachments(input.attachments, 2)
     .map((page, pageIndex) => {
@@ -67,7 +92,7 @@ function buildDocumentHtml(input: BuildPdfInput) {
       : `
       <section class="appendix">
         <h2>Anexos</h2>
-        <p class="appendix-subtitle">Evidências visuais anexadas ao final do documento</p>
+        <p class="appendix-subtitle">Evidencias visuais anexadas ao final do documento</p>
         ${attachmentPages}
       </section>
     `;
@@ -82,7 +107,7 @@ function buildDocumentHtml(input: BuildPdfInput) {
         <style>
           @page {
             size: A4;
-            margin: 18mm 14mm 16mm;
+            margin: 16mm 14mm 18mm;
           }
 
           * { box-sizing: border-box; }
@@ -94,6 +119,8 @@ function buildDocumentHtml(input: BuildPdfInput) {
             background: #ffffff;
             line-height: 1.45;
             position: relative;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
 
           .pdf-watermark {
@@ -105,48 +132,76 @@ function buildDocumentHtml(input: BuildPdfInput) {
             z-index: 0;
           }
 
+          .pdf-watermark img {
+            width: 220px;
+            height: 220px;
+            object-fit: contain;
+            opacity: 0.024;
+            filter: grayscale(100%);
+          }
+
           .pdf-watermark span {
-            transform: rotate(-24deg);
             font-size: 72px;
-            font-weight: 800;
-            letter-spacing: 1.6px;
+            font-weight: 700;
+            letter-spacing: 2px;
             color: #1e4d8f;
-            opacity: 0.045;
-            white-space: nowrap;
+            opacity: 0.024;
+            transform: rotate(-20deg);
           }
 
           .doc-header {
-            padding: 20px 24px;
-            border-radius: 14px;
+            padding: 12px 14px;
+            border-radius: 10px;
             background: linear-gradient(135deg, #0f2046 0%, #183a7a 100%);
             color: #f5f8ff;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
             position: relative;
             z-index: 1;
+            page-break-after: avoid;
+            break-after: avoid-page;
           }
 
-          .doc-header h1 {
-            margin: 0 0 8px;
-            font-size: 25px;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-          }
-
-          .doc-meta {
+          .doc-header-row {
             display: flex;
-            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: nowrap;
+          }
+
+          .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+          }
+
+          .brand img {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+          }
+
+          .brand strong {
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: -0.01em;
+          }
+
+          .source {
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             font-size: 12px;
             color: #d2e1ff;
-            flex-wrap: wrap;
           }
 
           .content {
-            padding: 14px 16px 8px;
+            padding: 14px 16px 10px;
             background: linear-gradient(180deg, #f8fbff 0%, #f3f8ff 100%);
             border: 1px solid #e5edf9;
             border-radius: 10px;
-            -webkit-box-decoration-break: clone;
-            box-decoration-break: clone;
             position: relative;
             z-index: 1;
           }
@@ -164,8 +219,13 @@ function buildDocumentHtml(input: BuildPdfInput) {
           .content h1 { font-size: 22px; }
           .content h2 { font-size: 18px; }
           .content h3 { font-size: 15px; }
+
           .content p,
-          .content li { font-size: 12.5px; }
+          .content li {
+            font-size: 12.5px;
+            orphans: 3;
+            widows: 3;
+          }
 
           .content p,
           .content li,
@@ -213,12 +273,8 @@ function buildDocumentHtml(input: BuildPdfInput) {
             margin-bottom: 0;
           }
 
-          .page-break {
-            page-break-before: always;
-          }
-
           .appendix {
-            margin-top: 0;
+            margin-top: 10px;
             page-break-before: always;
             position: relative;
             z-index: 1;
@@ -273,8 +329,7 @@ function buildDocumentHtml(input: BuildPdfInput) {
             height: 88mm;
             border: 1px dashed #9cb3dd;
             border-radius: 8px;
-            background:
-              linear-gradient(180deg, #eef4ff 0%, #e7effe 100%);
+            background: linear-gradient(180deg, #eef4ff 0%, #e7effe 100%);
             display: grid;
             place-items: center;
             padding: 3mm;
@@ -294,25 +349,72 @@ function buildDocumentHtml(input: BuildPdfInput) {
       </head>
       <body>
         <div class="pdf-watermark">
-            <span>NEXO</span>
+          ${
+            watermarkLogoDataUrl
+              ? `<img src="${watermarkLogoDataUrl}" alt="NEXO watermark" />`
+              : `<span>NEXO</span>`
+          }
         </div>
+
         <header class="doc-header">
-          <h1>Nexo</h1>
-          <div class="doc-meta">
-            <span>Fonte: ${escapeHtml(input.sourceName)}</span>
-            <span>Gerado em: ${escapeHtml(generatedAt)}</span>
+          <div class="doc-header-row">
+            <div class="brand">
+              ${headerLogoDataUrl ? `<img src="${headerLogoDataUrl}" alt="NEXO logo" />` : ""}
+              <strong>NEXO</strong>
+            </div>
+            <span class="source">Fonte: ${escapeHtml(input.sourceName)}</span>
           </div>
         </header>
 
-        <section class="content">${contentHtml}</section>
-        ${appendixHtml}
+        <main>
+          <section class="content">${contentHtml}</section>
+          ${appendixHtml}
+        </main>
       </body>
     </html>
   `;
 }
 
+function buildFooterTemplate(generatedAt: string) {
+  const escapedGeneratedAt = escapeHtml(generatedAt);
+
+  return `
+    <div style="
+      width: 100%;
+      font-family: Inter, 'Segoe UI', system-ui, sans-serif;
+      font-size: 9px;
+      color: #4b638d;
+      padding: 2mm 14mm 4mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #d7e2f4;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    ">
+      <span style="
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 16px;
+        padding: 0 7px;
+        border-radius: 999px;
+        border: 1px solid #b7c9ea;
+        color: #1f4b8f;
+        background: #edf3ff;
+        font-weight: 700;
+        letter-spacing: 0.35px;
+      ">FREE</span>
+      <span>Gerado em ${escapedGeneratedAt} · Pagina <span class="pageNumber"></span>/<span class="totalPages"></span></span>
+    </div>
+  `;
+}
+
 export async function buildPdfFromMarkdown(input: BuildPdfInput) {
-  const html = buildDocumentHtml(input);
+  const generatedAt = new Date().toLocaleString("pt-BR", { hour12: false });
+  const headerLogoDataUrl = resolveBrandAssetDataUrl(HEADER_LOGO_CANDIDATES);
+  const watermarkLogoDataUrl = resolveBrandAssetDataUrl(WATERMARK_LOGO_CANDIDATES);
+  const html = buildDocumentHtml(input, generatedAt, headerLogoDataUrl, watermarkLogoDataUrl);
   const explicitExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
 
   let browser;
@@ -338,7 +440,16 @@ export async function buildPdfFromMarkdown(input: BuildPdfInput) {
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      preferCSSPageSize: true
+      displayHeaderFooter: true,
+      headerTemplate: "<div></div>",
+      footerTemplate: buildFooterTemplate(generatedAt),
+      margin: {
+        top: "16mm",
+        right: "14mm",
+        bottom: "22mm",
+        left: "14mm"
+      },
+      preferCSSPageSize: false
     });
 
     return Buffer.from(pdf);

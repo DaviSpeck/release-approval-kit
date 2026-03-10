@@ -1,9 +1,9 @@
 # 01. PRD Enxuto e Completo
 
 ## Decisão de Naming do Produto
-- Marca principal: **Nexo**
-- Camada gratuita: **Nexo Free** (foco em Markdown para PDF com anexos)
-- Camada paga: **Nexo Pro** (foco em aprovação de release, integrações e governança)
+- Marca principal: **NEXO**
+- Camada gratuita: **NEXO Free** (foco em Markdown para PDF com anexos)
+- Camada paga: **NEXO Pro** (foco em aprovação de release, integrações e governança)
 - Regra de comunicação: a marca permanece estável e os módulos descrevem capacidade por plano
 
 ## Premissas

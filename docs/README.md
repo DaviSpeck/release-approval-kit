@@ -1,4 +1,4 @@
-# Nexo - Documentação Privada
+# NEXO - Documentação Privada
 
 Esta pasta foi separada em **negócio** e **tecnologia**.
 
@@ -14,13 +14,17 @@ Esta pasta foi separada em **negócio** e **tecnologia**.
 5. `tecnologia/08-backlog-priorizado.md`
 
 ## Contexto de modelo de negócio
-- Nexo Free: sessão não autenticada para `.md` + imagens + PDF
-- Nexo Pro: GitHub, histórico/versionamento e governança
+- NEXO Free: sessão não autenticada para `.md` + imagens + PDF
+- NEXO Pro: GitHub, histórico/versionamento e governança
 
 ## Decisão de marca e produto
-- Marca principal: **Nexo**
+- Marca principal: **NEXO**
 - Nome funcional no modo gratuito: **Markdown para PDF**
 - Nome funcional no modo pago: **Aprovação de Release**
+
+## Referência de logo vigente
+- Primária: `public/brand/nexo_logo_primary.svg`
+- Mono/discreta: `public/brand/nexo_logo_primary_mono.svg`
 
 ## Observações
 - Conteúdo em PT-BR

@@ -311,6 +311,40 @@ button:disabled {
   transform: none;
 }
 
+.submit-row {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.submit-row button {
+  margin-top: 0;
+}
+
+.status-text {
+  color: #b9ccef;
+}
+
+.limit-hint {
+  display: block;
+  margin-top: 8px;
+  color: #aac0e6;
+  line-height: 1.35;
+}
+
+.markdown-counter {
+  margin-top: -2px;
+  margin-bottom: 6px;
+  font-size: 0.84rem;
+  color: #9fb7df;
+}
+
+.counter-warn {
+  color: #ffd289;
+}
+
 .output-head {
   display: flex;
   justify-content: space-between;

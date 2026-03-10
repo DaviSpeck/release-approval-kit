@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Nexo",
-  description: "Nexo Free: Markdown para PDF com anexos",
+  title: "NEXO",
+  description: "NEXO Free: Markdown para PDF com anexos",
   icons: {
-    icon: "/brand/rak_icon.svg",
-    shortcut: "/brand/rak_icon.svg",
-    apple: "/brand/rak_icon_512.png"
+    icon: "/brand/nexo_logo_primary.svg",
+    shortcut: "/brand/nexo_logo_primary.svg",
+    apple: "/brand/nexo_logo_primary.png"
   }
 };
 
