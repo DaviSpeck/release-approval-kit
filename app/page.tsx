@@ -3,6 +3,7 @@
 import MarkdownIt from "markdown-it";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Script from "next/script";
 import {
   ChangeEvent,
   DragEvent,
@@ -18,6 +19,7 @@ import SiteFooter from "@/components/site-footer";
 import ThemeToggle from "@/components/theme-toggle";
 import { useScrollDeck } from "@/components/use-scroll-deck";
 import { FREE_LIMITS, formatBytes } from "@/lib/config/free-limits";
+import { DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS, getSiteUrl } from "@/lib/site-metadata";
 
 type AttachmentPayload = {
   fileName: string;
@@ -47,6 +49,22 @@ const previewMarkdownParser = new MarkdownIt({
   typographer: true,
   breaks: true,
 });
+
+const homeStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "NEXO",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  url: getSiteUrl(),
+  description: DEFAULT_DESCRIPTION,
+  keywords: DEFAULT_KEYWORDS.join(", "),
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD"
+  }
+};
 
 const copy = {
   pt: {
@@ -174,6 +192,8 @@ const copy = {
     remove: "Remover",
     contentMd: "Conteúdo markdown",
     previewTitle: "Preview do PDF",
+    previewOpen: "Abrir preview",
+    previewClose: "Fechar preview",
     limits: "Limites",
     generate: "Gerar PDF",
     generateMany: "Gerar PDFs",
@@ -331,6 +351,8 @@ const copy = {
     remove: "Remove",
     contentMd: "Markdown content",
     previewTitle: "PDF preview",
+    previewOpen: "Open preview",
+    previewClose: "Close preview",
     limits: "Limits",
     generate: "Generate PDF",
     generateMany: "Generate PDFs",
@@ -496,6 +518,7 @@ export default function HomePage() {
   const [isImageDragOver, setIsImageDragOver] = useState(false);
   const [isLogoDragOver, setIsLogoDragOver] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [lastGeneratedFile, setLastGeneratedFile] = useState<string | null>(
     null,
   );
@@ -589,19 +612,33 @@ export default function HomePage() {
   }, [activeDocumentId, documents]);
 
   useEffect(() => {
-    if (!mobileMenuOpen) {
-      return;
-    }
-
     const onResize = () => {
       if (window.innerWidth >= 980) {
         setMobileMenuOpen(false);
+        setPreviewModalOpen(false);
       }
     };
 
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [mobileMenuOpen]);
+  }, []);
+
+  useEffect(() => {
+    const shouldLockScroll =
+      window.innerWidth < 980 && (mobileMenuOpen || previewModalOpen);
+
+    if (!shouldLockScroll) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen, previewModalOpen]);
 
   function closeMenu() {
     setMobileMenuOpen(false);
@@ -1276,8 +1313,76 @@ export default function HomePage() {
     trackHomeEvent("open_support", { area });
   }
 
+  const previewDocument = (
+    <div className="preview-document-shell">
+      <div className="preview-document-page">
+        <header className="preview-document-header">
+          <div className="preview-document-left">
+            <div className="preview-document-client-card">
+              <div
+                className={`preview-brand-client-surface tone-${customLogoTone}`}
+              >
+                {customLogo ? (
+                  <img alt={customLogo.fileName} src={customLogo.dataUrl} />
+                ) : (
+                  <div className="preview-brand-placeholder">+</div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="preview-document-side">
+            <div className="preview-document-nexo-mark">
+              <img alt="NEXO" src="/brand/nexo_logo_primary.svg" />
+              <span>NEXO</span>
+            </div>
+          </div>
+        </header>
+
+        <section className="preview-document-content">
+          {markdown.trim() ? (
+            <div className="preview-document-markdown-wrap">
+              <div
+                className="preview-document-markdown"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            </div>
+          ) : (
+            <div className="preview-document-empty">{c.previewEmpty}</div>
+          )}
+
+          {attachments.length > 0 ? (
+            <div className="preview-document-attachments">
+              <strong>
+                {attachments.length}{" "}
+                {attachments.length === 1
+                  ? locale === "pt"
+                    ? "evidência anexada"
+                    : "evidence attached"
+                  : locale === "pt"
+                    ? "evidências anexadas"
+                    : "evidences attached"}
+              </strong>
+              <small>{c.docsAttachmentsHint}</small>
+            </div>
+          ) : null}
+        </section>
+
+        <footer className="preview-document-footer">
+          <span className="preview-document-footer-badge">FREE</span>
+          <span>{fileName} · Prévia visual do PDF</span>
+        </footer>
+      </div>
+    </div>
+  );
+
   return (
     <>
+      <Script
+        id="nexo-home-structured-data"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData) }}
+      />
       <main className="sales-page motion-root">
         <div className="page-nav-shell motion rise-1">
           <header className="hero-nav landing-nav">
@@ -1975,65 +2080,14 @@ export default function HomePage() {
                 <small>{markdown.trim() ? fileName : c.noMdYet}</small>
               </div>
               <small className="preview-context">{c.docsPreviewHint}</small>
-              <div className="preview-document-shell">
-                <div className="preview-document-page">
-                  <header className="preview-document-header">
-                    <div className="preview-document-left">
-                      <div className="preview-document-client-card">
-                        <div
-                          className={`preview-brand-client-surface tone-${customLogoTone}`}
-                        >
-                          {customLogo ? (
-                            <img alt={customLogo.fileName} src={customLogo.dataUrl} />
-                          ) : (
-                            <div className="preview-brand-placeholder">+</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="preview-document-side">
-                      <div className="preview-document-nexo-mark">
-                        <img alt="NEXO" src="/brand/nexo_logo_primary.svg" />
-                        <span>NEXO</span>
-                      </div>
-                    </div>
-                  </header>
-
-                  <section className="preview-document-content">
-                    {markdown.trim() ? (
-                      <div className="preview-document-markdown-wrap">
-                        <div
-                          className="preview-document-markdown"
-                          dangerouslySetInnerHTML={{ __html: previewHtml }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="preview-document-empty">{c.previewEmpty}</div>
-                    )}
-
-                    {attachments.length > 0 ? (
-                      <div className="preview-document-attachments">
-                        <strong>
-                          {attachments.length}{" "}
-                          {attachments.length === 1
-                            ? locale === "pt"
-                              ? "evidência anexada"
-                              : "evidence attached"
-                            : locale === "pt"
-                              ? "evidências anexadas"
-                              : "evidences attached"}
-                        </strong>
-                        <small>{c.docsAttachmentsHint}</small>
-                      </div>
-                    ) : null}
-                  </section>
-
-                  <footer className="preview-document-footer">
-                    <span className="preview-document-footer-badge">FREE</span>
-                    <span>{fileName} · Prévia visual do PDF</span>
-                  </footer>
-                </div>
-              </div>
+              <button
+                type="button"
+                className="preview-mobile-open"
+                onClick={() => setPreviewModalOpen(true)}
+              >
+                {c.previewOpen}
+              </button>
+              <div className="preview-inline-shell">{previewDocument}</div>
             </article>
           </div>
         </section>
@@ -2109,14 +2163,37 @@ export default function HomePage() {
           </div>
         </section>
 
-        <a
-          className="mobile-sticky-cta"
-          href="#free-converter"
-          onClick={() => trackPrimaryCta("sticky_mobile")}
-        >
-          {c.stickyCta}
-        </a>
       </main>
+
+      {previewModalOpen ? (
+        <div
+          className="preview-mobile-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={c.previewTitle}
+        >
+          <div
+            className="preview-mobile-backdrop"
+            onClick={() => setPreviewModalOpen(false)}
+          />
+          <div className="preview-mobile-sheet">
+            <div className="preview-mobile-head">
+              <div>
+                <strong>{c.previewTitle}</strong>
+                <small>{markdown.trim() ? fileName : c.noMdYet}</small>
+              </div>
+              <button
+                type="button"
+                className="preview-mobile-close"
+                onClick={() => setPreviewModalOpen(false)}
+              >
+                {c.previewClose}
+              </button>
+            </div>
+            <div className="preview-mobile-body">{previewDocument}</div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="page-footer-wrap">
         <SiteFooter

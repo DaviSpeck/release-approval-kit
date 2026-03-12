@@ -258,10 +258,6 @@ export default function PricingPage() {
   }, []);
 
   useEffect(() => {
-    if (!mobileMenuOpen) {
-      return;
-    }
-
     const onResize = () => {
       if (window.innerWidth >= 980) {
         setMobileMenuOpen(false);
@@ -270,6 +266,20 @@ export default function PricingPage() {
 
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth >= 980 || !mobileMenuOpen) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
   }, [mobileMenuOpen]);
 
   function closeMenu() {

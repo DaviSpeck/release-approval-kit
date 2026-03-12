@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import LegalTemplate from "@/components/legal-template";
 import { CONTACTS, CONTACT_LINKS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description:
+    "Review the NEXO terms of use for the free Markdown-to-PDF workflow, usage boundaries, intellectual property, and platform limitations.",
+  alternates: {
+    canonical: "/termos"
+  }
+};
 
 export default function TermsPage() {
   return (

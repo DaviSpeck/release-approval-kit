@@ -2,7 +2,7 @@ import MarkdownIt from "markdown-it";
 import { existsSync, readFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import serverlessChromium from "@sparticuz/chromium";
-import { chromium } from "playwright";
+import { chromium } from "playwright-core";
 
 type AttachmentInput = {
   fileName: string;
@@ -544,6 +544,7 @@ export async function buildPdfFromMarkdown(input: BuildPdfInput) {
   );
 
   let browser;
+  let launchError: unknown;
   try {
     if (explicitExecutablePath) {
       browser = await chromium.launch({ headless: true, executablePath: explicitExecutablePath });
@@ -557,13 +558,18 @@ export async function buildPdfFromMarkdown(input: BuildPdfInput) {
     } else {
       browser = await chromium.launch({ headless: true });
     }
-  } catch {
+  } catch (error) {
+    launchError = error;
     try {
       // Fallback to the locally installed Google Chrome when Playwright Chromium is missing.
       browser = await chromium.launch({ headless: true, channel: "chrome" });
-    } catch {
+    } catch (fallbackError) {
+      const primaryReason =
+        launchError instanceof Error ? launchError.message : String(launchError ?? "unknown");
+      const fallbackReason =
+        fallbackError instanceof Error ? fallbackError.message : String(fallbackError ?? "unknown");
       throw new Error(
-        "chromium_missing: configure Chromium for the runtime (Vercel/serverless) or define PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH"
+        `chromium_missing: primary="${primaryReason}" fallback="${fallbackReason}"`
       );
     }
   }

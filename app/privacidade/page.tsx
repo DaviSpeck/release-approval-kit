@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import LegalTemplate from "@/components/legal-template";
 import { CONTACTS, CONTACT_LINKS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "Read how NEXO handles privacy, free-session processing, operational metadata, and data rights for Markdown-to-PDF workflows.",
+  alternates: {
+    canonical: "/privacidade"
+  }
+};
 
 export default function PrivacyPage() {
   return (

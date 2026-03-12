@@ -2,10 +2,53 @@ import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_TITLE,
+  SITE_NAME,
+  getSiteUrl,
+} from "@/lib/site-metadata";
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  title: "NEXO",
-  description: "NEXO Free: Markdown para PDF com anexos",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: DEFAULT_TITLE,
+    template: "%s | NEXO"
+  },
+  description: DEFAULT_DESCRIPTION,
+  keywords: DEFAULT_KEYWORDS,
+  applicationName: SITE_NAME,
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: SITE_NAME,
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "NEXO - Markdown-to-PDF automation for engineering teams"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: ["/twitter-image"]
+  },
+  robots: {
+    index: true,
+    follow: true
+  },
   icons: {
     icon: "/brand/nexo_logo_primary.svg",
     shortcut: "/brand/nexo_logo_primary.svg",
@@ -46,7 +89,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   `;
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang={defaultLocale === "pt" ? "pt-BR" : "en"} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {children}

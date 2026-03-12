@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import LegalTemplate from "@/components/legal-template";
 import { CONTACTS, CONTACT_LINKS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  title: "Security",
+  description:
+    "Review NEXO security practices, free-session handling, operational safeguards, and how to report vulnerabilities.",
+  alternates: {
+    canonical: "/seguranca"
+  }
+};
 
 export default function SecurityPage() {
   return (

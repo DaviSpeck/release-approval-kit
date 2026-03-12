@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import LegalTemplate from "@/components/legal-template";
 import { CONTACTS, CONTACT_LINKS } from "@/lib/contacts";
+
+export const metadata: Metadata = {
+  title: "Support",
+  description:
+    "Get support for NEXO, including Markdown-to-PDF issues, free converter questions, privacy clarification, and security reports.",
+  alternates: {
+    canonical: "/suporte"
+  }
+};
 
 export default function SupportPage() {
   return (

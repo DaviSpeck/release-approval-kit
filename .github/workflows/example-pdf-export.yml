@@ -1,0 +1,54 @@
+name: Example PDF Export
+
+on:
+  workflow_dispatch:
+
+jobs:
+  export-example:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: yarn playwright install chromium
+
+      - name: Build app
+        run: yarn build
+
+      - name: Start app
+        run: yarn start &
+
+      - name: Wait for app
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/api/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App did not become ready in time"
+          exit 1
+
+      - name: Generate example PDF
+        run: |
+          curl -X POST http://127.0.0.1:3000/api/free/convert \
+            -H "Content-Type: application/json" \
+            --data @docs/examples/payload.json \
+            --output docs/examples/release-summary.pdf
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexo-example-pdf
+          path: docs/examples/release-summary.pdf
