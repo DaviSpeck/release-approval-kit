@@ -1,9 +1,0 @@
-{
-  "documents": [
-    {
-      "fileName": "release-summary.md",
-      "markdown": "# Release Summary\n\n## Highlights\n\n- Added SSO support for internal users\n- Reduced API latency by 32%\n- Closed 14 production bugs\n\n## Scope\n\n- Authentication improvements\n- API performance work\n- Operational stability updates\n\n## Risks\n\n- Rollback playbook still needs final review\n- Metrics dashboard thresholds need verification after rollout\n\n## Next Steps\n\n1. Validate the staging checklist\n2. Roll out gradually\n3. Share the final PDF with stakeholders\n",
-      "attachments": []
-    }
-  ]
-}

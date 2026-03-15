@@ -19,6 +19,7 @@ import SiteFooter from "@/components/site-footer";
 import ThemeToggle from "@/components/theme-toggle";
 import { useScrollDeck } from "@/components/use-scroll-deck";
 import { FREE_LIMITS, formatBytes } from "@/lib/config/free-limits";
+import { EXAMPLE_DOCUMENTS } from "@/lib/example-documents";
 import { DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS, getSiteUrl } from "@/lib/site-metadata";
 
 type AttachmentPayload = {
@@ -48,6 +49,7 @@ const previewMarkdownParser = new MarkdownIt({
   linkify: true,
   typographer: true,
   breaks: true,
+  tables: true,
 });
 
 const homeStructuredData = {
@@ -138,6 +140,12 @@ const copy = {
     benefit3t: "Privacidade no modo Free",
     benefit3d:
       "Processamento temporário durante a sessão, sem persistir conteúdo do arquivo ou anexos.",
+    examplesKicker: "Exemplos reais",
+    examplesTitle: "Teste com exemplos reais.",
+    examplesCopy:
+      "Use um exemplo no conversor ou baixe o PDF final para avaliar a saída.",
+    examplesUse: "Usar no conversor",
+    examplesDownloadPdf: "Baixar PDF",
     freeKicker: "Free Converter",
     freeTitle: "Teste agora e valide o fluxo completo sem login",
     freeSubtitle:
@@ -193,6 +201,7 @@ const copy = {
     contentMd: "Conteúdo markdown",
     previewTitle: "Preview do PDF",
     previewOpen: "Abrir preview",
+    previewExpand: "Expandir preview",
     previewClose: "Fechar preview",
     limits: "Limites",
     generate: "Gerar PDF",
@@ -297,6 +306,12 @@ const copy = {
     benefit3t: "Privacy in Free mode",
     benefit3d:
       "Temporary processing during the session, without persisting file or attachment contents.",
+    examplesKicker: "Real examples",
+    examplesTitle: "Try real examples.",
+    examplesCopy:
+      "Load a sample into the converter or download the final PDF to inspect output quality.",
+    examplesUse: "Use in converter",
+    examplesDownloadPdf: "Download PDF",
     freeKicker: "Free Converter",
     freeTitle: "Try the full flow now without login",
     freeSubtitle:
@@ -352,6 +367,7 @@ const copy = {
     contentMd: "Markdown content",
     previewTitle: "PDF preview",
     previewOpen: "Open preview",
+    previewExpand: "Expand preview",
     previewClose: "Close preview",
     limits: "Limits",
     generate: "Generate PDF",
@@ -519,6 +535,7 @@ export default function HomePage() {
   const [isLogoDragOver, setIsLogoDragOver] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewExpanded, setPreviewExpanded] = useState(false);
   const [lastGeneratedFile, setLastGeneratedFile] = useState<string | null>(
     null,
   );
@@ -624,8 +641,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const shouldLockScroll =
-      window.innerWidth < 980 && (mobileMenuOpen || previewModalOpen);
+    const shouldLockScroll = mobileMenuOpen || previewModalOpen || previewExpanded;
 
     if (!shouldLockScroll) {
       document.body.style.overflow = "";
@@ -638,10 +654,32 @@ export default function HomePage() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [mobileMenuOpen, previewModalOpen]);
+  }, [mobileMenuOpen, previewExpanded, previewModalOpen]);
 
   function closeMenu() {
     setMobileMenuOpen(false);
+  }
+
+  function loadExample(slug: string) {
+    const example = EXAMPLE_DOCUMENTS.find((item) => item.slug === slug);
+    if (!example || !activeDocument) {
+      return;
+    }
+
+    updateActiveDocument((document) => ({
+      ...document,
+      fileName: example.fileName,
+      markdown: example.markdown,
+      attachments: [],
+    }));
+    setLastGeneratedFile(null);
+    updateStatus(
+      locale === "pt"
+        ? `Exemplo carregado: ${example.title.pt}`
+        : `Example loaded: ${example.title.en}`,
+      "success",
+    );
+    trackHomeEvent("load_example", { slug });
   }
 
   function updateActiveDocument(
@@ -1313,9 +1351,9 @@ export default function HomePage() {
     trackHomeEvent("open_support", { area });
   }
 
-  const previewDocument = (
-    <div className="preview-document-shell">
-      <div className="preview-document-page">
+  const previewDocument = (expanded = false) => (
+    <div className={`preview-document-shell ${expanded ? "expanded" : ""}`}>
+      <div className={`preview-document-page ${expanded ? "expanded" : ""}`}>
         <header className="preview-document-header">
           <div className="preview-document-left">
             <div className="preview-document-client-card">
@@ -1340,7 +1378,9 @@ export default function HomePage() {
 
         <section className="preview-document-content">
           {markdown.trim() ? (
-            <div className="preview-document-markdown-wrap">
+            <div
+              className={`preview-document-markdown-wrap ${expanded ? "expanded" : ""}`}
+            >
               <div
                 className="preview-document-markdown"
                 dangerouslySetInnerHTML={{ __html: previewHtml }}
@@ -1630,6 +1670,44 @@ export default function HomePage() {
                 <strong>{c.benefit3t}</strong>
                 <p>{c.benefit3d}</p>
               </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section-transition motion rise-2">
+          <div className="landing-section-shell landing-examples-shell">
+            <div className="landing-section-head">
+              <p className="section-kicker">{c.examplesKicker}</p>
+              <h2>{c.examplesTitle}</h2>
+              <p>{c.examplesCopy}</p>
+            </div>
+
+            <div className="landing-examples-grid" data-deck-group>
+              {EXAMPLE_DOCUMENTS.map((example) => (
+                <article key={example.slug} className="deck-card landing-example-card">
+                  <div className="landing-example-head">
+                    <strong>{example.title[locale]}</strong>
+                    <small>{example.fileName}</small>
+                  </div>
+                  <p>{example.summary[locale]}</p>
+                  <div className="landing-example-actions">
+                    <button
+                      type="button"
+                      className="landing-example-action"
+                      onClick={() => loadExample(example.slug)}
+                    >
+                      {c.examplesUse}
+                    </button>
+                    <a
+                      className="landing-example-link"
+                      href={`/examples/${example.slug}.pdf`}
+                      download
+                    >
+                      {c.examplesDownloadPdf}
+                    </a>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -2087,7 +2165,14 @@ export default function HomePage() {
               >
                 {c.previewOpen}
               </button>
-              <div className="preview-inline-shell">{previewDocument}</div>
+              <button
+                type="button"
+                className="preview-desktop-open"
+                onClick={() => setPreviewExpanded(true)}
+              >
+                {c.previewExpand}
+              </button>
+              <div className="preview-inline-shell">{previewDocument()}</div>
             </article>
           </div>
         </section>
@@ -2190,7 +2275,37 @@ export default function HomePage() {
                 {c.previewClose}
               </button>
             </div>
-            <div className="preview-mobile-body">{previewDocument}</div>
+            <div className="preview-mobile-body">{previewDocument()}</div>
+          </div>
+        </div>
+      ) : null}
+
+      {previewExpanded ? (
+        <div
+          className="preview-desktop-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={c.previewTitle}
+        >
+          <div
+            className="preview-desktop-backdrop"
+            onClick={() => setPreviewExpanded(false)}
+          />
+          <div className="preview-desktop-shell">
+            <div className="preview-desktop-head">
+              <div>
+                <strong>{c.previewTitle}</strong>
+                <small>{markdown.trim() ? fileName : c.noMdYet}</small>
+              </div>
+              <button
+                type="button"
+                className="preview-desktop-close"
+                onClick={() => setPreviewExpanded(false)}
+              >
+                {c.previewClose}
+              </button>
+            </div>
+            <div className="preview-desktop-body">{previewDocument(true)}</div>
           </div>
         </div>
       ) : null}

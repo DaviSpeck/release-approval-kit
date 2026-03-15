@@ -68,7 +68,13 @@ function buildDocumentHtml(
   headerLogoDataUrl: string,
   watermarkLogoDataUrl: string
 ) {
-  const md = new MarkdownIt({ html: false, linkify: true, typographer: true, breaks: true });
+  const md = new MarkdownIt({
+    html: false,
+    linkify: true,
+    typographer: true,
+    breaks: true,
+    tables: true,
+  });
   const documentsHtml = input.documents
     .map((document, documentIndex) => {
       const contentHtml = md.render(document.markdown);
@@ -372,6 +378,38 @@ function buildDocumentHtml(
           .content ol {
             margin: 0.4em 0 0.8em;
             padding-left: 20px;
+          }
+
+          .content table {
+            width: 100%;
+            margin: 10px 0 14px;
+            border-collapse: collapse;
+            table-layout: auto;
+            border: 1px solid #d7e4f7;
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgb(13 35 72 / 6%);
+          }
+
+          .content th,
+          .content td {
+            padding: 10px 12px;
+            border: 1px solid #d7e4f7;
+            text-align: left;
+            vertical-align: top;
+            word-break: normal;
+            overflow-wrap: anywhere;
+            font-size: 12px;
+            line-height: 1.45;
+          }
+
+          .content th {
+            color: #16305c;
+            background: linear-gradient(180deg, #eef4ff 0%, #e5efff 100%);
+            font-weight: 700;
+          }
+
+          .content tbody tr:nth-child(even) td {
+            background: #f8fbff;
           }
 
           .content > *:first-child {

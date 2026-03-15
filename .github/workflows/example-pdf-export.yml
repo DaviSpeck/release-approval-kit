@@ -44,11 +44,11 @@ jobs:
         run: |
           curl -X POST http://127.0.0.1:3000/api/free/convert \
             -H "Content-Type: application/json" \
-            --data @docs/examples/payload.json \
-            --output docs/examples/release-summary.pdf
+            --data @examples/payload.json \
+            --output release-summary.pdf
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: nexo-example-pdf
-          path: docs/examples/release-summary.pdf
+          path: release-summary.pdf

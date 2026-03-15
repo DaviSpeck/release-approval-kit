@@ -1,7 +1,16 @@
 {
   "name": "nexo",
   "version": "0.1.0",
+  "description": "Markdown to corporate PDF automation for developer documentation workflows.",
   "private": true,
+  "keywords": [
+    "markdown-to-pdf",
+    "docs-as-code",
+    "developer-tools",
+    "pdf-generation",
+    "nextjs",
+    "playwright"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",

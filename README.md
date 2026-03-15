@@ -9,26 +9,47 @@
 </p>
 
 <p align="center">
-  <strong>Convert Markdown into corporate-ready PDFs, automatically.</strong>
+  <strong>Markdown -> corporate PDF automation for developer documentation workflows.</strong>
 </p>
 
 <p align="center">
-  NEXO is a developer tool for turning Markdown documentation into polished, branded PDF reports for engineering, product, compliance, and delivery workflows.
+  NEXO turns Markdown documentation into polished, shareable PDFs through a web UI and API, so engineering teams can ship stakeholder-ready docs without manual formatting.
 </p>
 
 <p align="center">
-  <img alt="Status" src="https://img.shields.io/badge/status-alpha-f59e0b" />
+  <img alt="Status" src="https://img.shields.io/badge/status-v0.1%20free-2563eb" />
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-black" />
-  <img alt="React" src="https://img.shields.io/badge/React-19-149eca" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178c6" />
   <img alt="PDF Engine" src="https://img.shields.io/badge/PDF-Playwright-45ba63" />
   <img alt="License" src="https://img.shields.io/badge/license-MIT-22c55e" />
 </p>
 
-NEXO helps developers and engineering teams automate one of the most painful last-mile documentation tasks: converting raw Markdown into PDF deliverables that are presentable outside the engineering org.
+![NEXO demo](public/video-to-gif-nexo.gif)
 
-Today, this repository implements **NEXO Free**: a browser-based and API-driven Markdown-to-PDF workflow with support for attachments and custom branding.
+NEXO is an open-source developer tool for teams that already write docs in Markdown but need a cleaner output for leadership updates, release approvals, client reports, architecture reviews, and compliance handoffs.
 
-## Markdown In. Corporate PDF Out.
+## Early Access
+
+The free converter is live for validation and early feedback.
+
+- Try the product locally with the web UI or API examples in this repository
+- Try the hosted product at [nexo.speck-solutions.com.br](https://nexo.speck-solutions.com.br/)
+- Join the early-access waitlist at [nexo.speck-solutions.com.br/pricing](https://nexo.speck-solutions.com.br/pricing)
+- Use the waitlist to validate interest before investing in paid acquisition or broader launch work
+
+## Why NEXO
+
+Markdown is great for authoring, versioning, and collaborating. It is usually not great for the final handoff.
+
+NEXO closes that gap by converting Markdown into corporate-ready PDFs with:
+
+- browser-based PDF rendering via Playwright
+- multi-document conversion in a single request
+- optional image attachments as appendix pages
+- custom logo support for branded output
+- a simple web UI and a scriptable API
+
+## Workflow
 
 ```text
 Markdown docs / release notes / ADRs / reports
@@ -41,18 +62,17 @@ Markdown docs / release notes / ADRs / reports
        Corporate-ready PDF for sharing
 ```
 
-Use NEXO when you need to turn technical documentation into PDFs for:
+Typical use cases:
 
-- release approvals
-- client-facing reports
-- architecture reviews
-- internal status updates
-- compliance or audit handoffs
-- technical writer handoffs from Markdown sources
+- release summaries for approval flows
+- ADRs and architecture reviews
+- client-facing delivery reports
+- incident summaries with evidence attachments
+- compliance and audit documentation exports
 
 ## Quick Example
 
-### 1. Write Markdown
+Write Markdown:
 
 ```md
 # Release Summary
@@ -63,93 +83,77 @@ Use NEXO when you need to turn technical documentation into PDFs for:
 - Closed 14 production bugs
 
 ## Risks
-- Pending rollback playbook review
+- Rollback playbook still needs final review
 
 ## Next Steps
-1. Validate staging checklist
-2. Share PDF with stakeholders
+1. Validate the staging checklist
+2. Share the PDF with stakeholders
 ```
 
-### 2. Convert with NEXO
+Generate a PDF with the API:
 
 ```bash
 curl -X POST http://localhost:3000/api/free/convert \
   -H "Content-Type: application/json" \
-  -o release-summary.pdf \
+  --data @examples/payload.json \
+  --output release-summary.pdf
+```
+
+The resulting PDF is paginated for A4 output and ready to share outside GitHub or your internal docs stack.
+
+## API Usage
+
+Health check:
+
+```bash
+curl http://localhost:3000/api/health
+```
+
+Conversion request:
+
+```bash
+curl -X POST http://localhost:3000/api/free/convert \
+  -H "Content-Type: application/json" \
   -d '{
     "documents": [
       {
         "fileName": "release-summary.md",
-        "markdown": "# Release Summary\n\n## Highlights\n- Added SSO support\n- Reduced API latency by 32%",
+        "markdown": "# Release Summary\n\n## Highlights\n- Added SSO support\n- Reduced API latency by 32%\n- Closed 14 production bugs",
         "attachments": []
       }
-    ]
-  }'
+    ],
+    "customLogo": {
+      "fileName": "brand-mark.png",
+      "mimeType": "image/png",
+      "dataUrl": "data:image/png;base64,<your-base64-logo>",
+      "tone": "light"
+    }
+  }' \
+  --output release-summary-branded.pdf
 ```
 
-See more reusable examples in [docs/examples/README.md](./docs/examples/README.md).
+Current free API limits:
 
-### 3. Get a polished PDF
+- up to 3 Markdown documents per request
+- up to 120,000 characters per document
+- up to 180,000 characters total
+- up to 4 attachments per document
+- up to 8 attachments total
+- up to 4 MB per attachment
+- up to 16 MB total attachment size
+- optional custom logo up to 2 MB
+- accepted attachments: `png`, `jpeg`, `webp`
+- accepted logo formats: `png`, `jpeg`, `webp`, `svg`
 
-- ready to download
-- paginated for A4 output
-- branded footer and visual document structure
-- suitable for sharing outside GitHub or your docs stack
+## Local Setup
 
-## Why NEXO?
+Prerequisites:
 
-Markdown is the best authoring format for developers, but it is rarely the best delivery format for stakeholders.
+- Node.js 22+
+- Yarn 1.x
+- Playwright Chromium
 
-Teams often end up with one of these bad options:
-
-- manually copy content into Google Docs, Word, or Slides
-- export plain text or poorly formatted HTML to PDF
-- maintain duplicate versions of the same document
-- delay documentation handoff because final formatting is tedious
-
-NEXO closes that gap.
-
-It lets teams keep writing in Markdown while automating the transformation into presentation-ready PDFs that fit real business workflows.
-
-## Features
-
-- Convert Markdown to polished PDFs through a web UI or API
-- Upload up to 3 documents per request
-- Attach supporting images per document for appendix-style output
-- Add custom logo branding to generated PDFs
-- Generate PDFs with Playwright for consistent browser-quality rendering
-- Preserve a shareable PDF output for non-technical stakeholders
-- Fit naturally into CI/CD and GitHub-based documentation workflows
-- Run locally with a simple Next.js setup
-- Support serverless Chromium and local Chrome fallback strategies
-
-## Example Outputs
-
-NEXO is designed for documentation automation across common engineering workflows:
-
-| Input | Output |
-| --- | --- |
-| `release-notes.md` | Executive-ready release PDF for approval or distribution |
-| `adr-042.md` | Architecture decision PDF for reviews, sign-off, or archival |
-| `incident-summary.md` | Post-incident report PDF with evidence attachments |
-| `delivery-report.md` | Client-facing delivery summary in branded PDF format |
-
-Output characteristics:
-
-- clean A4 layout
-- branded footer
-- structured headings and readable spacing
-- attachment appendix pages when images are included
-
-## Installation
-
-### Prerequisites
-
-- Node.js
-- Yarn
-- Playwright Chromium for PDF generation
-
-### Run locally
+Install and run:
 
 ```bash
 yarn install
@@ -157,138 +161,99 @@ yarn playwright install chromium
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000).
 
-### Available endpoint
-
-- `GET /api/health`
-- `POST /api/free/convert`
-
-## Usage Notes
-
-Current limits in **NEXO Free**:
-
-- up to 3 Markdown documents per request
-- up to 120,000 characters per document
-- up to 4 attachments per document
-- up to 8 attachments total
-- up to 4 MB per attachment
-- up to 16 MB total attachment size
-- accepted attachment types: `png`, `jpeg`, `webp`
-
-If Chromium is not available locally:
+Useful commands:
 
 ```bash
-yarn playwright install chromium
+yarn typecheck
+yarn build
 ```
 
-NEXO can also fall back to a locally installed Google Chrome, or use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` when needed.
+## Generate Your First PDF
 
-## CI/CD and GitHub Automation
+1. Start the app with `yarn dev`.
+2. Open the web UI at `http://localhost:3000`.
+3. Upload `examples/release-summary.md` or paste Markdown content.
+4. Optionally add image attachments or a custom logo.
+5. Generate the PDF from the UI, or call the API with `examples/payload.json`.
 
-NEXO is built for documentation automation, not just one-off exports.
+## Project Structure
 
-Typical automation patterns:
-
-- generate stakeholder PDFs from Markdown on every GitHub release
-- convert `/docs` content into downloadable report artifacts in CI
-- package release notes as PDFs for approval flows
-- produce branded reports from engineering docs without manual formatting
-
-Example GitHub Actions step:
-
-```yaml
-- name: Generate PDF with NEXO
-  run: |
-    curl -X POST "${NEXO_BASE_URL}/api/free/convert" \
-      -H "Content-Type: application/json" \
-      --data @payload.json \
-      --output docs-report.pdf
+```text
+app/                  Next.js app router pages and API routes
+components/           UI components
+lib/                  PDF generation, limits, and shared services
+examples/             sample Markdown and API payloads
+public/               static brand assets and demo media
+supabase/             SQL migrations for waitlist and event logs
 ```
 
-## Who NEXO Is For
+## Features
 
-- developers who already write in Markdown
-- engineering teams that need stakeholder-friendly outputs
-- technical writers working from repository-based source docs
-- DevOps or platform teams building documentation pipelines
-- teams that want branded PDFs without manual layout work
+- Markdown to PDF conversion through a web UI and API
+- Playwright-based rendering for browser-quality output
+- Multi-document conversion in a single request
+- Attachment appendix pages for screenshots and evidence
+- Optional custom logo branding in generated PDFs
+- A4-friendly PDF layout for stakeholder sharing
+- Waitlist capture and product-interest flow with Supabase
+- Usage-event logging for the free converter and web flows
+- CI example for generating PDF artifacts from docs
+
+## Release Status
+
+`v0.1 - NEXO Free` currently focuses on the free converter experience:
+
+- unauthenticated Markdown to PDF conversion
+- browser upload workflow
+- API-first conversion path for local automation
+- branding and attachment support
+- waitlist capture and event logging
+- CI example for repeatable PDF export
+
+## GitHub Launch Ready
+
+For PASSO 1 of public validation, this repository now has:
+
+- a clear positioning statement near the top
+- the demo GIF visible in the opening section
+- a concrete API example and local setup path
+- sample files in `examples/`
+- a live website at [nexo.speck-solutions.com.br](https://nexo.speck-solutions.com.br/)
+- waitlist support implemented in the product via [the pricing page](https://nexo.speck-solutions.com.br/pricing) and `/api/waitlist`
+
+Before publishing the repo, set the GitHub repository description to:
+
+`Markdown -> corporate PDF automation for developer documentation workflows.`
 
 ## Roadmap
 
-Current and planned direction for NEXO:
-
 - [x] Markdown-to-PDF conversion
-- [x] Attachment appendix support
 - [x] Multi-document conversion
-- [x] Custom logo support
-- [x] Browser-based upload workflow
-- [ ] richer Markdown rendering for tables and code blocks
-- [ ] reusable PDF themes and templates
-- [ ] GitHub-native workflows for converting repository docs
-- [ ] CLI for local and CI automation
-- [ ] hosted NEXO Pro approval and governance workflows
+- [x] Attachment appendix support
+- [x] Custom logo branding
+- [x] Web UI and API for local use
+- [x] Waitlist and event logging integration
+- [x] CI example for automated PDF export
+- [ ] Richer Markdown rendering for tables and code blocks
+- [ ] Reusable themes and output templates
+- [ ] CLI for CI and local automation
+- [ ] GitHub-native workflows for docs repositories
+- [ ] Hosted NEXO Pro collaboration and governance features
 
 ## Contributing
 
 Contributions are welcome, especially around:
 
-- Markdown rendering quality
-- PDF layout and theming
-- GitHub and CI integrations
+- Markdown rendering fidelity
+- PDF layout quality
 - API ergonomics
-- docs, examples, and sample workflows
+- CI and GitHub automation examples
+- docs, onboarding, and sample workflows
 
-Recommended contribution flow:
-
-1. Open an issue describing the problem or proposal.
-2. Keep changes focused and easy to review.
-3. Include reproduction steps for bugs.
-4. Share screenshots or sample PDFs for output-related changes when possible.
-
-If you plan to contribute major changes, start with an issue so the direction stays aligned.
-
-Full contributor guidance is available in [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## Repository Positioning Tips
-
-To improve GitHub discovery and developer adoption, consider adding these repository topics:
-
-- `markdown-to-pdf`
-- `documentation`
-- `docs-as-code`
-- `developer-tools`
-- `pdf-generation`
-- `technical-writing`
-- `devrel`
-- `github-actions`
-- `cicd`
-- `nextjs`
-
-Suggested demo assets for the repository:
-
-- a short GIF showing `.md` upload to PDF download
-- a before/after image comparing raw Markdown and final PDF
-- one sample PDF in `/docs/examples/`
-- one CI example in `.github/workflows/`
-
-Suggested repository structure improvements:
-
-- `docs/examples/` for sample Markdown and generated PDFs
-- `docs/assets/` for screenshots and demo GIFs
-- `.github/workflows/` for automation examples
-- `CONTRIBUTING.md` for contributor onboarding
-- `LICENSE` at the repository root for open-source clarity
-
-Repository support files already included:
-
-- [CONTRIBUTING.md](./CONTRIBUTING.md)
-- [SECURITY.md](./SECURITY.md)
-- [.github/workflows/ci.yml](./.github/workflows/ci.yml)
-- [.github/workflows/example-pdf-export.yml](./.github/workflows/example-pdf-export.yml)
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for local setup and contribution guidance.
 
 ## License
 
 This repository is licensed under the [MIT License](./LICENSE).
-
-Note: [docs/LICENSE](./docs/LICENSE) still contains a separate proprietary notice for documentation assets. If that is no longer intentional, it should be reviewed to avoid mixed licensing signals.
