@@ -48,6 +48,7 @@ NEXO closes that gap by converting Markdown into corporate-ready PDFs with:
 - optional image attachments as appendix pages
 - custom logo support for branded output
 - a simple web UI and a scriptable API
+- a dedicated CLI repository for batch conversion via the hosted API
 
 ## Workflow
 
@@ -100,6 +101,28 @@ curl -X POST http://localhost:3000/api/free/convert \
 ```
 
 The resulting PDF is paginated for A4 output and ready to share outside GitHub or your internal docs stack.
+
+## CLI
+
+NEXO also has a dedicated CLI repository for command-line and batch workflows:
+
+- Repository: [github.com/DaviSpeck/nexo-cli](https://github.com/DaviSpeck/nexo-cli)
+- Guide in this repo: [CLI.md](./CLI.md)
+
+Install globally:
+
+```bash
+npm install -g nexo-md-to-pdf-cli
+```
+
+Run conversions:
+
+```bash
+nexo release-summary.md
+nexo a.md b.md --output-dir ./pdfs
+```
+
+The CLI uses the hosted NEXO API, so rendering, free-mode limits, and Supabase usage counting remain centralized in the main product. In this first CLI version, attachments stay out of scope on purpose.
 
 ## API Usage
 
@@ -208,6 +231,7 @@ supabase/             SQL migrations for waitlist and event logs
 - unauthenticated Markdown to PDF conversion
 - browser upload workflow
 - API-first conversion path for local automation
+- dedicated CLI repository for hosted conversion from terminal workflows
 - branding and attachment support
 - waitlist capture and event logging
 - CI example for repeatable PDF export
@@ -238,7 +262,7 @@ Before publishing the repo, set the GitHub repository description to:
 - [x] CI example for automated PDF export
 - [ ] Richer Markdown rendering for tables and code blocks
 - [ ] Reusable themes and output templates
-- [ ] CLI for CI and local automation
+- [x] Dedicated CLI repository for CI and local automation
 - [ ] GitHub-native workflows for docs repositories
 - [ ] Hosted NEXO Pro collaboration and governance features
 

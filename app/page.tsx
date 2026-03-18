@@ -73,6 +73,7 @@ const copy = {
     navProduct: "Produto",
     navHow: "Como funciona",
     navFree: "Teste grátis",
+    navCli: "CLI",
     navPlans: "Planos",
     navSupport: "Suporte",
     ctaPrimary: "Testar agora",
@@ -239,6 +240,7 @@ const copy = {
     navProduct: "Product",
     navHow: "How it works",
     navFree: "Free trial",
+    navCli: "CLI",
     navPlans: "Plans",
     navSupport: "Support",
     ctaPrimary: "Try now",
@@ -1462,6 +1464,9 @@ export default function HomePage() {
                 <a href="#free-converter" onClick={closeMenu}>
                   {c.navFree}
                 </a>
+                <Link href="/cli" onClick={closeMenu}>
+                  {c.navCli}
+                </Link>
                 <a href="#suporte" onClick={closeMenu}>
                   {c.navSupport}
                 </a>

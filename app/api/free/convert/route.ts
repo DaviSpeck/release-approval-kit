@@ -106,6 +106,7 @@ function getClientIpHash(request: NextRequest) {
 }
 
 type FreeRunLogInput = {
+  eventSource: string;
   path: string;
   referrer: string;
   userAgent: string;
@@ -136,7 +137,7 @@ async function insertFreeRunLog(input: FreeRunLogInput) {
       prefer: "return=minimal"
     },
     body: JSON.stringify({
-      event_source: "free_converter",
+      event_source: input.eventSource,
       path: input.path,
       referrer: input.referrer,
       user_agent: input.userAgent,
@@ -163,6 +164,9 @@ export async function POST(request: NextRequest) {
   const referrer = request.headers.get("referer") ?? "";
   const userAgent = request.headers.get("user-agent") ?? "";
   const ipHash = getClientIpHash(request);
+  const requestSourceHeader = (request.headers.get("x-nexo-client-source") ?? "").trim().toLowerCase();
+  const eventSource =
+    requestSourceHeader === "cli" ? "free_converter_cli" : "free_converter_web";
 
   const contentLengthHeader = request.headers.get("content-length");
   const requestBytes = contentLengthHeader && Number.isFinite(Number(contentLengthHeader)) ? Number(contentLengthHeader) : 0;
@@ -179,6 +183,7 @@ export async function POST(request: NextRequest) {
     try {
       await insertFreeRunLog({
         path,
+        eventSource,
         referrer,
         userAgent,
         ipHash,

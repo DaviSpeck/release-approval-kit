@@ -344,9 +344,7 @@ function buildDocumentHtml(
 
           .content p,
           .content li,
-          .content blockquote,
-          .content pre,
-          .content table {
+          .content blockquote {
             page-break-inside: avoid;
             break-inside: avoid-page;
           }
@@ -363,7 +361,10 @@ function buildDocumentHtml(
             border: 1px solid #ccdaf6;
             white-space: pre-wrap;
             word-break: break-word;
+            overflow-wrap: anywhere;
             font-size: 11px;
+            page-break-inside: auto;
+            break-inside: auto;
           }
 
           .content code {
@@ -372,6 +373,18 @@ function buildDocumentHtml(
             border: 1px solid #d8e3f8;
             border-radius: 6px;
             padding: 1px 4px;
+          }
+
+          .content pre code {
+            display: block;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            font-size: inherit;
+            white-space: inherit;
+            word-break: inherit;
+            overflow-wrap: inherit;
           }
 
           .content ul,
@@ -388,6 +401,21 @@ function buildDocumentHtml(
             border: 1px solid #d7e4f7;
             background: #ffffff;
             box-shadow: 0 8px 20px rgb(13 35 72 / 6%);
+            page-break-inside: auto;
+            break-inside: auto;
+          }
+
+          .content thead {
+            display: table-header-group;
+          }
+
+          .content tfoot {
+            display: table-footer-group;
+          }
+
+          .content tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
           }
 
           .content th,

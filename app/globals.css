@@ -1434,6 +1434,19 @@ button:disabled {
   white-space: pre-wrap;
 }
 
+.preview-document-markdown pre code {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  white-space: inherit;
+  word-break: inherit;
+  overflow-wrap: inherit;
+}
+
 .preview-document-markdown a {
   color: #1f4b8f;
 }
@@ -3069,7 +3082,8 @@ html.deck-enabled .deck-card.deck-in {
 .landing-product-card,
 .landing-benefit-card,
 .landing-access-card,
-.landing-support-card {
+.landing-support-card,
+.landing-cli-card {
   border: 1px solid color-mix(in srgb, var(--line) 58%, transparent);
   border-radius: 16px;
   padding: 18px;
@@ -3079,7 +3093,8 @@ html.deck-enabled .deck-card.deck-in {
 .landing-step-card strong,
 .landing-product-card strong,
 .landing-benefit-card strong,
-.landing-access-card strong {
+.landing-access-card strong,
+.landing-cli-card strong {
   display: block;
   margin-bottom: 8px;
   font-family: Sora, "Trebuchet MS", sans-serif;
@@ -3089,7 +3104,8 @@ html.deck-enabled .deck-card.deck-in {
 .landing-product-card p,
 .landing-benefit-card p,
 .landing-access-card p,
-.landing-support-card p {
+.landing-support-card p,
+.landing-cli-card p {
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
@@ -3122,7 +3138,8 @@ html.deck-enabled .deck-card.deck-in {
 .landing-product-grid,
 .landing-benefits-grid,
 .landing-access-grid,
-.landing-support-grid {
+.landing-support-grid,
+.landing-cli-grid {
   margin-top: 18px;
   display: grid;
   gap: 12px;
@@ -3138,11 +3155,23 @@ html.deck-enabled .deck-card.deck-in {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.landing-cli-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
 .landing-access-card-highlight {
   background:
     linear-gradient(155deg, #112543f4 0%, #0d1d36f1 100%),
     radial-gradient(circle at 100% 0, #68ffd52a 0%, transparent 44%);
   box-shadow: 0 14px 30px #4ef4c22e, inset 0 0 0 1px #8effdd33;
+}
+
+.landing-cli-card-highlight {
+  background:
+    linear-gradient(155deg, #10284af5 0%, #0d1d36f2 100%),
+    radial-gradient(circle at 100% 0, #6ec3ff2b 0%, transparent 46%);
+  box-shadow: 0 14px 30px #4aa3ff26, inset 0 0 0 1px #9fdaff30;
 }
 
 .landing-access-card .btn-cta-main,
@@ -3168,6 +3197,58 @@ html.deck-enabled .deck-card.deck-in {
   padding-left: 18px;
   color: var(--muted);
   line-height: 1.7;
+}
+
+.landing-cli-card small {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.landing-cli-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.landing-cli-code {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+  background: color-mix(in srgb, var(--surface-note) 92%, transparent);
+  min-height: 0;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre-wrap;
+}
+
+.landing-cli-code code {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.9rem;
+  color: var(--text-strong);
+  white-space: inherit;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.landing-cli-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.landing-cli-actions .btn-cta-alt,
+.landing-cli-actions .btn-cta-main {
+  width: fit-content;
 }
 
 .landing-support-card .btn-cta-alt {
@@ -3522,6 +3603,7 @@ html.deck-enabled .deck-card.deck-in {
   .landing-benefits-grid,
   .landing-access-grid,
   .landing-support-grid,
+  .landing-cli-grid,
   .pricing-note-steps {
     grid-template-columns: 1fr;
   }
@@ -3777,7 +3859,9 @@ html.deck-enabled .deck-card.deck-in {
   .submit-row button,
   .landing-access-card .btn-cta-main,
   .landing-access-card .btn-cta-alt,
-  .landing-support-card .btn-cta-alt {
+  .landing-support-card .btn-cta-alt,
+  .landing-cli-actions .btn-cta-alt,
+  .landing-cli-actions .btn-cta-main {
     width: 100%;
   }
 

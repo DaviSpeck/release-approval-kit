@@ -9,6 +9,7 @@ const copy = {
     product: "Navegação",
     home: "Home",
     free: "Free Converter",
+    cli: "CLI",
     pricing: "Planos e acesso",
     support: "Suporte",
     help: "Central de suporte",
@@ -24,6 +25,7 @@ const copy = {
     product: "Navigation",
     home: "Home",
     free: "Free Converter",
+    cli: "CLI",
     pricing: "Plans and access",
     support: "Support",
     help: "Support center",
@@ -68,6 +70,7 @@ export default function SiteFooter({
           <Link href="/#free-converter" onClick={onFreeClick}>
             {c.free}
           </Link>
+          <Link href="/cli">{c.cli}</Link>
           <Link href="/pricing" onClick={onPricingClick}>
             {c.pricing}
           </Link>
