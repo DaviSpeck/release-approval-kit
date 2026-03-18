@@ -32,6 +32,8 @@ nexo release-summary.md
 nexo release-summary.md --output ./release-summary.pdf
 nexo a.md b.md c.md --output-dir ./pdfs
 nexo release-summary.md --logo ./brand.svg --logo-tone light
+nexo config set-logo ./brand.svg --logo-tone light
+nexo config show
 ```
 
 To point the CLI to another environment:
@@ -39,6 +41,24 @@ To point the CLI to another environment:
 ```bash
 nexo release-summary.md --api-base-url http://localhost:3000
 ```
+
+## Saved default logo
+
+If you use the same logo in every conversion, you can save it once and reuse it automatically:
+
+```bash
+nexo config set-logo ./brand.svg --logo-tone light
+nexo release-summary.md
+```
+
+To inspect or clear the saved branding:
+
+```bash
+nexo config show
+nexo config clear-logo
+```
+
+The CLI stores this local preference in `~/.nexo/config.json`. Passing `--logo` in a conversion command still overrides the saved default for that run.
 
 ## Current scope
 

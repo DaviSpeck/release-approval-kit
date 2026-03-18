@@ -120,9 +120,10 @@ Run conversions:
 ```bash
 nexo release-summary.md
 nexo a.md b.md --output-dir ./pdfs
+nexo config set-logo ./brand.svg --logo-tone light
 ```
 
-The CLI uses the hosted NEXO API, so rendering, free-mode limits, and Supabase usage counting remain centralized in the main product. In this first CLI version, attachments stay out of scope on purpose.
+The CLI uses the hosted NEXO API, so rendering, free-mode limits, and Supabase usage counting remain centralized in the main product. It also supports saving a default logo once with `nexo config set-logo`, so recurring branded conversions no longer need `--logo` every time. In this first CLI version, attachments stay out of scope on purpose.
 
 ## API Usage
 

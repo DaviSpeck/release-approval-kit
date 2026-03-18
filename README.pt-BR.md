@@ -120,9 +120,10 @@ Uso:
 ```bash
 nexo release-summary.md
 nexo a.md b.md --output-dir ./pdfs
+nexo config set-logo ./brand.svg --logo-tone light
 ```
 
-A CLI usa a API hospedada da NEXO, então renderização, limites do modo Free e contagem de uso no Supabase continuam centralizados no produto principal. Nesta primeira versão, anexos ficam fora do escopo de propósito.
+A CLI usa a API hospedada da NEXO, então renderização, limites do modo Free e contagem de uso no Supabase continuam centralizados no produto principal. Ela também permite salvar uma logo padrão com `nexo config set-logo`, evitando repetir `--logo` em toda conversão recorrente. Nesta primeira versão, anexos ficam fora do escopo de propósito.
 
 ## Exemplos Reais
 

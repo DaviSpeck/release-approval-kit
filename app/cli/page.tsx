@@ -16,7 +16,8 @@ const CLI_GUIDE_URL_PT = "https://github.com/DaviSpeck/nexo/blob/main/CLI.pt-BR.
 const CLI_INSTALL_COMMAND = "npm install -g nexo-md-to-pdf-cli";
 const CLI_RUN_COMMAND = "nexo release-summary.md";
 const CLI_BATCH_COMMAND = "nexo a.md b.md --output-dir ./pdfs";
-const CLI_LOCAL_COMMAND = "nexo release-summary.md --api-base-url http://localhost:3000";
+const CLI_SET_LOGO_COMMAND = "nexo config set-logo ./brand.svg --logo-tone light";
+const CLI_SHOW_CONFIG_COMMAND = "nexo config show";
 
 const copy = {
   pt: {
@@ -38,21 +39,22 @@ const copy = {
     sectionInstall: "Instalação",
     sectionUsage: "Uso",
     sectionBatch: "Lote",
-    sectionLocal: "Ambiente local",
+    sectionBranding: "Branding persistente",
+    sectionConfig: "Configuração",
     installTitle: "1. Instale globalmente",
     installBody:
       "Use npm para disponibilizar o comando na máquina. Depois disso, a execução fica simples e direta para qualquer markdown.",
     usageTitle: "2. Converta um arquivo ou rode em lote",
     usageBody:
       "Cada `.md` vira uma conversão separada. Isso facilita automação local, scripts e rotinas em CI sem misturar arquivos no mesmo comando.",
-    localTitle: "3. Aponte para outro ambiente quando precisar",
-    localBody:
-      "Você pode usar localhost ou staging com `--api-base-url`, mantendo o mesmo contrato da API pública.",
+    brandingTitle: "3. Salve uma logo padrão uma vez",
+    brandingBody:
+      "Se você sempre usa a mesma marca, configure a logo uma vez com a CLI. Depois disso, conversões simples com `nexo arquivo.md` já reutilizam esse branding por padrão.",
     currentScopeTitle: "Escopo atual da CLI",
     currentScopeBody:
-      "A primeira versão da CLI é focada em markdown e logo opcional. Fluxos com anexos continuam melhores na aplicação web.",
+      "A primeira versão da CLI é focada em markdown, logo opcional e logo padrão salva localmente. Fluxos com anexos continuam melhores na aplicação web.",
     scope1: "Conversão de Markdown suportada",
-    scope2: "Logo opcional suportada",
+    scope2: "Logo opcional e logo padrão salvas",
     scope3: "Anexos fora do escopo da v1",
     repoCta: "Abrir repositório da CLI",
     guideCta: "Ver guia no repo principal",
@@ -80,21 +82,22 @@ const copy = {
     sectionInstall: "Install",
     sectionUsage: "Usage",
     sectionBatch: "Batch",
-    sectionLocal: "Local environment",
+    sectionBranding: "Saved branding",
+    sectionConfig: "Config",
     installTitle: "1. Install globally",
     installBody:
       "Use npm to make the command available on your machine. After that, running conversions stays simple for any markdown file.",
     usageTitle: "2. Convert one file or run in batch",
     usageBody:
       "Each `.md` becomes its own conversion job. That makes local automation, scripts, and CI routines easier without mixing files in the same command.",
-    localTitle: "3. Point to another environment when needed",
-    localBody:
-      "You can target localhost or staging with `--api-base-url` while keeping the same contract as the public API.",
+    brandingTitle: "3. Save a default logo once",
+    brandingBody:
+      "If you always use the same brand asset, configure it once in the CLI. After that, plain `nexo file.md` conversions automatically reuse that branding by default.",
     currentScopeTitle: "Current CLI scope",
     currentScopeBody:
-      "The first CLI version focuses on markdown and optional logo. Attachment-heavy workflows are still better handled in the web app.",
+      "The first CLI version focuses on markdown, optional logo, and a saved local default logo. Attachment-heavy workflows are still better handled in the web app.",
     scope1: "Markdown conversion supported",
-    scope2: "Optional logo supported",
+    scope2: "One-off and saved default logos supported",
     scope3: "Attachments out of scope for v1",
     repoCta: "Open CLI repository",
     guideCta: "View guide in main repo",
@@ -286,11 +289,15 @@ export default function CliPage() {
               </article>
 
               <article className="deck-card landing-cli-card landing-cli-card-highlight">
-                <strong>{c.localTitle}</strong>
-                <p>{c.localBody}</p>
-                <small>{c.sectionLocal}</small>
+                <strong>{c.brandingTitle}</strong>
+                <p>{c.brandingBody}</p>
+                <small>{c.sectionBranding}</small>
                 <pre className="landing-cli-code">
-                  <code>{CLI_LOCAL_COMMAND}</code>
+                  <code>{CLI_SET_LOGO_COMMAND}</code>
+                </pre>
+                <small>{c.sectionConfig}</small>
+                <pre className="landing-cli-code">
+                  <code>{CLI_SHOW_CONFIG_COMMAND}</code>
                 </pre>
                 <div className="landing-cli-actions">
                   <a className="btn-cta-alt" href={CLI_REPO_URL} target="_blank" rel="noreferrer">
